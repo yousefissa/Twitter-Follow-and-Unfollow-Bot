@@ -72,24 +72,26 @@ def followBack():
     # gets followers, following, total_followed
     followers, following, total_followed = getFriends()
 
+     # Makes a list of  those you don't follow back.
+    nonFollowing = set(followers) - set(following)
+
     print('Starting to follow.')
-    # checks friendships
-    for f in followers:
-        if f in following:
-            print('Already follow this user. ')
-        else:
-            # follows the user if you don't already follow them back.
-            api.create_friendship(f)
 
-            # keep track of the total followed
-            total_followed += 1
-            # print total total every 10 follows
-            if total_followed % 10 == 0:
-                print(str(total_followed) + ' users followed so far.')
+    # starts following users.
+    for f in nonFollowing:
+        # follows the user if you don't already follow them back.
+        api.create_friendship(f)
 
-            # sleeps so it doesn't follow too quickly.
-            print('Followed user. Sleeping 10 seconds.')
-            time.sleep(10)
+        # keep track of the total followed
+        total_followed += 1
+        # print total total every 10 follows
+        if total_followed % 10 == 0:
+            print(str(total_followed) + ' users followed so far.')
+
+        # sleeps so it doesn't follow too quickly.
+        print('Followed user. Sleeping 10 seconds.')
+        time.sleep(10)
+
 
     # prints the total followed, then continues
     print(total_followed)
