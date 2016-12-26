@@ -9,6 +9,7 @@
 
 
 import tweepy, time
+from re import search
 
 
 # Change this!
@@ -33,10 +34,12 @@ def mainMenu():
           '1. Follow back users that follow you. \n'
           '2. Follow the followers of another user. \n'
           '3. Follow users based on a keyword. \n'
-          '4. Unfollow users that don\'t follow you back. \n'
-          '5. Unfollow all users. \n'
-          '6. Send a DM to users that follow you. \n'
-          '7. Get follower and following count. \n'
+          '4. Follow users who retweeted a tweet. \n'
+          '5. Unfollow users that don\'t follow you back. \n'
+          '6. Unfollow all users. \n'
+          '7. Send a DM to users that follow you. \n'
+          '8. Get follower and following count. \n'
+          '9. Quit. '
           )
     userChoice = input('Enter the number of the action that you want to take: ')
 
@@ -46,10 +49,12 @@ def mainMenu():
     1: followBack,
     2: followAll,
     3: followKeyword,
-    4: unfollowBack,
-    5: unfollowAll,
-    6: sendDM,
-    7: getCount 
+    4: followRters,
+    5: unfollowBack,
+    6: unfollowAll,
+    7: sendDM,
+    8: getCount, 
+    9: quit
     }
 
     # tries running the function according to the number. restarts if given a non-number or number not in range.
@@ -151,6 +156,59 @@ def followKeyword():
     # TODO: implement function to follow based on keywords using search()
     print('This is coming soon.')
     Continue()
+
+
+
+# function to follow users who retweeted a tweet.
+def followRters():
+    # gets followers, following, total_followed
+    followers, following, total_followed = getFriends()
+    
+    print('Per Twitter\'s API, this method only returns a max of 100 users per tweet.')
+
+    # gets the tweet ID using regex
+    tweetURL = input('Please input the full URL of the tweet: ')
+    try:
+        tweetID = search('/status/(\d+)', tweetURL).group(1)
+    except:
+        print('Could not get tweet ID. Try again. ')
+        followRters()
+
+    # gets a list of users who retweeted a tweet
+    RTUsers = api.retweeters(tweetID)
+
+    print('Starting to follow users.')
+
+    # follows users:
+    for f in RTUsers:
+        try:
+            # follows the user.
+            api.create_friendship(f)
+            # keep track of the total followed
+            total_followed += 1
+            # print total total every 10 follows
+            if total_followed % 10 == 0:
+                print(str(total_followed) + ' users followed so far.')
+            # sleeps so it doesn't follow too quickly.
+            print('Followed user. Sleeping 10 seconds.')
+            time.sleep(10)
+        # most basic error handling.
+        except:
+            print('Could not follow user.')
+
+
+    # prints the total followed, then continues
+    print(total_followed)
+    getCount()
+    Continue()
+
+
+
+
+
+
+
+
 
 # function to unfollow users that don't follow you back.
 def unfollowBack():
