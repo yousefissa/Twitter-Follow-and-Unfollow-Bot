@@ -20,6 +20,7 @@ ACCESS_SECRET = ''
 
 
 
+
 # authorization from values inputted earlier, do not change.
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
@@ -233,24 +234,23 @@ def unfollowBack():
     print('Starting to unfollow users...')
 
     # makes a new list of users who don't follow you back.
-    nonMutuals = set(following) - set(followers)
+    nonMutuals = set(following) - set(followers) - set(whitelistedUsers)
     for f in nonMutuals:
-        if f not in whitelistedUsers:
-            try:
-                # unfollows non follower.
-                api.destroy_friendship(f)
+        try:
+            # unfollows non follower.
+            api.destroy_friendship(f)
 
-                # increment total_followed by 1
-                total_followed += 1
-                # print total unfollowed every 10
-                if total_followed % 10 == 0:
-                    print(str(total_followed) + ' unfollowed so far.')
+            # increment total_followed by 1
+            total_followed += 1
+            # print total unfollowed every 10
+            if total_followed % 10 == 0:
+                print(str(total_followed) + ' unfollowed so far.')
 
-                # print sleeping, sleep.
-                print('Unfollowed user. Sleeping 2 seconds.')
-                time.sleep(2)
-            except:
-                print('Could not follow users. Trying next user.')
+            # print sleeping, sleep.
+            print('Unfollowed user. Sleeping 2 seconds.')
+            time.sleep(2)
+        except:
+            print('Could not follow users. Trying next user.')
 
 
     # prints the total followed, then continues
@@ -263,20 +263,22 @@ def unfollowAll():
     # gets followers, following, total_followed
     followers, following, total_followed, whitelistedUsers = getFriends()
 
-    print('Starting to unfollow.')
-    for f in following:
-        if f not in whitelistedUsers:
-            # unfollows user
-            api.destroy_friendship(f)
-            # increment total_followed by 1
-            total_followed += 1
-            # print total unfollowed every 10
-            if total_followed % 10 == 0:
-                print(str(total_followed) + ' unfollowed so far.')
+    # whitelists some users.
+    unfollowingUsers = set(following) - set(whitelistedUsers)
 
-            # print sleeping, sleep.
-            print('Unfollowed user. Sleeping 3 seconds.')
-            time.sleep(3)
+    print('Starting to unfollow.')
+    for f in unfollowingUsers:
+        # unfollows user
+        api.destroy_friendship(f)
+        # increment total_followed by 1
+        total_followed += 1
+        # print total unfollowed every 10
+        if total_followed % 10 == 0:
+            print(str(total_followed) + ' unfollowed so far.')
+
+        # print sleeping, sleep.
+        print('Unfollowed user. Sleeping 3 seconds.')
+        time.sleep(3)
     # prints the total followed, then continues
     print(total_followed)
     getCount()
