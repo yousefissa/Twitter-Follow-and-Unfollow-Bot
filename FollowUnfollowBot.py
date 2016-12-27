@@ -6,8 +6,6 @@
 # Know your limits with this bot. Look at the twitter API limits so you don't get locked out.
 
 
-
-
 import tweepy, time
 from re import search
 
@@ -30,7 +28,8 @@ api = tweepy.API(auth)
 
 # ask the user what they want to do then runs the function accordingly
 def mainMenu():
-    print('This is a bot that allows you to do a few things: \n'
+    print('Please read the readme on Github before using this bot. \n'
+          'This is a bot that allows you to do a few things: \n'
           '1. Follow back users that follow you. \n'
           '2. Follow the followers of another user. \n'
           '3. Follow users based on a keyword. \n'
@@ -67,20 +66,36 @@ def mainMenu():
 
 
 
-# function to get list of followers and followings
+# function to get list of followers and followings, gets whitelisted users
 def getFriends():
     # gets a list of your followers and following
     followers = api.followers_ids(screen_name)
     following = api.friends_ids(screen_name)
     # resets total_followed everytime this is called. This is so that the user can keep track when they continue.
     total_followed = 0
-    return followers, following, total_followed
+
+    # gets a list of whitelisted users from a text file
+    with open('Whitelisted.txt') as whitelistedText:
+        whitelistedUsersOld = whitelistedText.read().splitlines()
+
+    # to not modify the iterated we're looping over, a new list is created.
+    whitelistedUsers = []
+
+    # convert screen names to user IDs
+    for item in whitelistedUsersOld:
+        # gets info, then gets id.
+        item = api.get_user(screen_name=item).id
+        # adds the id into newlist.
+        whitelistedUsers.append(item)
+
+
+    return followers, following, total_followed, whitelistedUsers
 
 
 # function to follow back users that follow you.
 def followBack():
     # gets followers, following, total_followed
-    followers, following, total_followed = getFriends()
+    followers, following, total_followed, whitelistedUsers = getFriends()
 
      # Makes a list of  those you don't follow back.
     nonFollowing = set(followers) - set(following)
@@ -115,7 +130,7 @@ def followBack():
 # function to follow the followers of another user.
 def followAll():
     # gets followers, following, total_followed
-    followers, following, total_followed = getFriends()
+    followers, following, total_followed, whitelistedUsers = getFriends()
 
     # gets a list of their followers
     theirName = input('Input their name. Do not use an @ sign. For example, for @POTUS, input just POTUS: ')
@@ -162,9 +177,9 @@ def followKeyword():
 # function to follow users who retweeted a tweet.
 def followRters():
     # gets followers, following, total_followed
-    followers, following, total_followed = getFriends()
+    followers, following, total_followed, whitelistedUsers = getFriends()
     
-    print('Per Twitter\'s API, this method only returns a max of 100 users per tweet.')
+    print('Per Twitter\'s API, this method only returns a max of 100 users per tweet. \n')
 
     # gets the tweet ID using regex
     tweetURL = input('Please input the full URL of the tweet: ')
@@ -213,28 +228,29 @@ def followRters():
 # function to unfollow users that don't follow you back.
 def unfollowBack():
     # gets followers, following, total_followed
-    followers, following, total_followed = getFriends()
+    followers, following, total_followed, whitelistedUsers = getFriends()
 
     print('Starting to unfollow users...')
 
     # makes a new list of users who don't follow you back.
     nonMutuals = set(following) - set(followers)
     for f in nonMutuals:
-        try:
-            # unfollows non follower.
-            api.destroy_friendship(f)
+        if f not in whitelistedUsers:
+            try:
+                # unfollows non follower.
+                api.destroy_friendship(f)
 
-            # increment total_followed by 1
-            total_followed += 1
-            # print total unfollowed every 10
-            if total_followed % 10 == 0:
-                print(str(total_followed) + ' unfollowed so far.')
+                # increment total_followed by 1
+                total_followed += 1
+                # print total unfollowed every 10
+                if total_followed % 10 == 0:
+                    print(str(total_followed) + ' unfollowed so far.')
 
-            # print sleeping, sleep.
-            print('Unfollowed user. Sleeping 2 seconds.')
-            time.sleep(2)
-        except:
-            print('Could not follow users. Trying next user.')
+                # print sleeping, sleep.
+                print('Unfollowed user. Sleeping 2 seconds.')
+                time.sleep(2)
+            except:
+                print('Could not follow users. Trying next user.')
 
 
     # prints the total followed, then continues
@@ -245,21 +261,22 @@ def unfollowBack():
 # function to unfollow all users.
 def unfollowAll():
     # gets followers, following, total_followed
-    followers, following, total_followed = getFriends()
+    followers, following, total_followed, whitelistedUsers = getFriends()
 
     print('Starting to unfollow.')
     for f in following:
-        # unfollows user
-        api.destroy_friendship(f)
-        # increment total_followed by 1
-        total_followed += 1
-        # print total unfollowed every 10
-        if total_followed % 10 == 0:
-            print(str(total_followed) + ' unfollowed so far.')
+        if f not in whitelistedUsers:
+            # unfollows user
+            api.destroy_friendship(f)
+            # increment total_followed by 1
+            total_followed += 1
+            # print total unfollowed every 10
+            if total_followed % 10 == 0:
+                print(str(total_followed) + ' unfollowed so far.')
 
-        # print sleeping, sleep.
-        print('Unfollowed user. Sleeping 3 seconds.')
-        time.sleep(3)
+            # print sleeping, sleep.
+            print('Unfollowed user. Sleeping 3 seconds.')
+            time.sleep(3)
     # prints the total followed, then continues
     print(total_followed)
     getCount()
@@ -270,7 +287,7 @@ def unfollowAll():
 # Send a DM to users that follow you.
 def sendDM():
     # gets followers, following, total_followed
-    followers, following, total_followed = getFriends()
+    followers, following, total_followed, whitelistedUsers = getFriends()
 
     print('A message will be sent')
 
@@ -305,7 +322,7 @@ def sendDM():
 # function to get follower/following count
 def getCount():
     # gets followers, following, total_followed
-    followers, following, total_followed = getFriends()
+    followers, following, total_followed, whitelistedUsers = getFriends()
     # prints the count.
     print('You follow {} users and {} users follow you.'.format(len(followers), len(followers)))
     print('This is sometimes inaccurate due to the nature of the API and updates. Be sure to double check. ')
