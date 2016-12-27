@@ -11,7 +11,11 @@ This is a twitter bot that allows you to do a few things:
 6. Unfollow all users. 
 7. Send users automated DMs.
 8. Get follower and following count. 
+9. Quit
 
 
-You will need tweepy and time installed.
+You will need tweepy, re and time installed.
 
+FOR WHITELISTING:
+
+Whitelisting a user means that the bot will NOT unfollow them. To whitelist a user, input one screen_name WITHOUT the @ sign per line below. Here are some examples. Input the names to the whitelisted.txt file.
