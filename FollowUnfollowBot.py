@@ -2,24 +2,16 @@
 # author - yousefissa
 
 # NOTE: You only have to change 1 thing: Change the user info below (screen name ,consumer_key, etc.)
-# If you want to harcode your message in, put it under senDM()
+# If you want to hardcode your message in, put it under senDM()
 # Know your limits with this bot. Look at the twitter API limits so you don't get locked out.
 
 
 import tweepy, time
 from re import search
 
-
-# Change this!
-# user info, change as necessary. Get this info from the twitter app page.
-screen_name = ''
-CONSUMER_KEY = ''
-CONSUMER_SECRET = ''
-ACCESS_TOKEN = ''
-ACCESS_SECRET = ''
-
-
-
+# gets keys from config.py
+with open('config.py') as config:
+    exec(config.read())
 
 # authorization from values inputted earlier, do not change.
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -43,18 +35,17 @@ def mainMenu():
           )
     userChoice = input('Enter the number of the action that you want to take: ')
 
-
     # Dictionary of user choices
     choices = {
-    1: followBack,
-    2: followAll,
-    3: followKeyword,
-    4: followRters,
-    5: unfollowBack,
-    6: unfollowAll,
-    7: sendDM,
-    8: getCount, 
-    9: quit
+        1: followBack,
+        2: followAll,
+        3: followKeyword,
+        4: followRters,
+        5: unfollowBack,
+        6: unfollowAll,
+        7: sendDM,
+        8: getCount,
+        9: quit
     }
 
     # tries running the function according to the number. restarts if given a non-number or number not in range.
@@ -64,7 +55,6 @@ def mainMenu():
         print('Input not recognized. You probably did not enter a number. \n'
               'The program will restart. \n')
         mainMenu()
-
 
 
 # function to get list of followers and followings, gets whitelisted users
@@ -89,7 +79,6 @@ def getFriends():
         # adds the id into newlist.
         whitelistedUsers.append(item)
 
-
     return followers, following, total_followed, whitelistedUsers
 
 
@@ -98,7 +87,7 @@ def followBack():
     # gets followers, following, total_followed
     followers, following, total_followed, whitelistedUsers = getFriends()
 
-     # Makes a list of  those you don't follow back.
+    # Makes a list of  those you don't follow back.
     nonFollowing = set(followers) - set(following)
 
     print('Starting to follow users...')
@@ -118,14 +107,10 @@ def followBack():
         print('Followed user. Sleeping 10 seconds.')
         time.sleep(10)
 
-
     # prints the total followed, then continues
     print(total_followed)
     getCount()
     Continue()
-
-
-
 
 
 # function to follow the followers of another user.
@@ -159,12 +144,10 @@ def followAll():
         except:
             pass
 
-
     # prints the total followed, then continues
     print(total_followed)
     getCount()
     Continue()
-
 
 
 # function to follow users based on a keyword:
@@ -174,12 +157,11 @@ def followKeyword():
     Continue()
 
 
-
 # function to follow users who retweeted a tweet.
 def followRters():
     # gets followers, following, total_followed
     followers, following, total_followed, whitelistedUsers = getFriends()
-    
+
     print('Per Twitter\'s API, this method only returns a max of 100 users per tweet. \n')
 
     # gets the tweet ID using regex
@@ -212,18 +194,10 @@ def followRters():
         except:
             print('Could not follow user.')
 
-
     # prints the total followed, then continues
     print(total_followed)
     getCount()
     Continue()
-
-
-
-
-
-
-
 
 
 # function to unfollow users that don't follow you back.
@@ -247,16 +221,16 @@ def unfollowBack():
                 print(str(total_followed) + ' unfollowed so far.')
 
             # print sleeping, sleep.
-            print('Unfollowed user. Sleeping 2 seconds.')
-            time.sleep(2)
+            print('Unfollowed user. Sleeping 3 seconds.')
+            time.sleep(3)
         except:
-            print('Could not follow users. Trying next user.')
-
+            print('Could not unfollow users. Trying next user.')
 
     # prints the total followed, then continues
     print(total_followed)
     getCount()
     Continue()
+
 
 # function to unfollow all users.
 def unfollowAll():
@@ -300,7 +274,7 @@ def sendDM():
     # tries sending a message to your followers. 
     print('Starting to send messages... ')
     for f in followers:
-        try: 
+        try:
             # sends dm. 
             api.send_direct_message(user_id=f, text=message)
 
@@ -320,7 +294,6 @@ def sendDM():
     Continue()
 
 
-
 # function to get follower/following count
 def getCount():
     # gets followers, following, total_followed
@@ -329,7 +302,6 @@ def getCount():
     print('You follow {} users and {} users follow you.'.format(len(followers), len(followers)))
     print('This is sometimes inaccurate due to the nature of the API and updates. Be sure to double check. ')
     Continue()
-
 
 
 # function to continue
@@ -350,10 +322,5 @@ def Continue():
         Continue()
 
 
-
 # runs the main function, which runs everything else.
 mainMenu()
-
-
-
-
