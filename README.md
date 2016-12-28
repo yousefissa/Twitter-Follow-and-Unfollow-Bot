@@ -1,6 +1,6 @@
 Python3
 
-This is a twitter bot that allows you to do a few things:
+# This is a twitter bot that allows you to do a few things:
 
 
 1. Follow back users that follow you.
@@ -16,6 +16,10 @@ This is a twitter bot that allows you to do a few things:
 
 You will need tweepy, re and time installed.
 
-FOR WHITELISTING:
+## Config.py
+
+You must put your auth info into config.py
+
+## FOR WHITELISTING:
 
 Whitelisting a user means that the bot will NOT unfollow them. To whitelist a user, input one screen_name WITHOUT the @ sign per line below. Here are some examples. Input the names to the whitelisted.txt file.
