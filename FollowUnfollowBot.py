@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # a bot that either follows or unfollows users
 # author - yousefissa
 
@@ -8,10 +9,8 @@
 
 import tweepy, time
 from re import search
+from config import *
 
-# gets keys from config.py
-with open('config.py') as config:
-    exec(config.read())
 
 # authorization from values inputted earlier, do not change.
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
