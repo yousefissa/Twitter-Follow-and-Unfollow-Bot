@@ -17,7 +17,6 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
 api = tweepy.API(auth)
 
-
 # ask the user what they want to do then runs the function accordingly
 def mainMenu():
     print('Please read the readme on Github before using this bot. \n'
@@ -139,8 +138,7 @@ def followAll():
             # sleeps so it doesn't follow too quickly.
             print('Followed user. Sleeping 10 seconds.')
             time.sleep(10)
-        # most basic error handling.
-        except:
+        except tweepy.TweepError as e:
             pass
 
     # prints the total followed, then continues
@@ -151,10 +149,48 @@ def followAll():
 
 # function to follow users based on a keyword:
 def followKeyword():
-    # TODO: implement function to follow based on keywords using search()
-    print('This is coming soon.')
+    followers, following, total_followed, whitelistedUsers = getFriends()
+
+    with open('keywords.txt') as keywordsText:
+        keywords = keywordsText.read().splitlines()
+
+    for i in keywords:
+        # gets search result
+        searchResults = api.search(q=i,count=100)
+        searchedScreenNames = [tweet.author._json['screen_name'] for tweet in searchResults]
+        # only follows 100 of each keyword to avoid following non-relevant users.
+        print('Starting to follow users who tweeted \'{}\''.format(i))
+        for i in range(0, len(searchedScreenNames) - 1):
+            try:
+                # follows the user.
+                api.create_friendship(searchedScreenNames[i])
+                # keep track of the total followed
+                total_followed += 1
+                # print total total every 10 follows
+                if total_followed % 10 == 0:
+                    print(str(total_followed) + ' users followed so far.')
+                # sleeps so it doesn't follow too quickly.
+                print('Followed user. Sleeping 10 seconds.')
+                time.sleep(10)
+            except tweepy.TweepError as e:
+                print('Could not follow user.')
+                pass
+    # prints the total followed, then continues
+    print(total_followed)
+    getCount()
     Continue()
 
+
+
+
+
+
+
+
+    # prints the total followed, then continues
+    print(total_followed)
+    getCount()
+    Continue()
 
 # function to follow users who retweeted a tweet.
 def followRters():
@@ -167,7 +203,7 @@ def followRters():
     tweetURL = input('Please input the full URL of the tweet: ')
     try:
         tweetID = search('/status/(\d+)', tweetURL).group(1)
-    except:
+    except tweepy.TweepError as e:
         print('Could not get tweet ID. Try again. ')
         followRters()
 
@@ -190,7 +226,7 @@ def followRters():
             print('Followed user. Sleeping 10 seconds.')
             time.sleep(10)
         # most basic error handling.
-        except:
+        except tweepy.TweepError as e:
             print('Could not follow user.')
 
     # prints the total followed, then continues
@@ -220,9 +256,9 @@ def unfollowBack():
                 print(str(total_followed) + ' unfollowed so far.')
 
             # print sleeping, sleep.
-            print('Unfollowed user. Sleeping 3 seconds.')
-            time.sleep(3)
-        except:
+            print('Unfollowed user. Sleeping 8 seconds.')
+            time.sleep(8)
+        except tweepy.TweepError as e:
             print('Could not unfollow users. Trying next user.')
 
     # prints the total followed, then continues
@@ -250,8 +286,8 @@ def unfollowAll():
             print(str(total_followed) + ' unfollowed so far.')
 
         # print sleeping, sleep.
-        print('Unfollowed user. Sleeping 3 seconds.')
-        time.sleep(3)
+        print('Unfollowed user. Sleeping 8 seconds.')
+        time.sleep(8)
     # prints the total followed, then continues
     print(total_followed)
     getCount()
@@ -286,7 +322,7 @@ def sendDM():
             print('Sent the user a DM. Sleeping 15 seconds.')
             time.sleep(15)
 
-        except:
+        except tweepy.TweepError as e:
             print('Could not send a DM. Trying another user.')
     print(total_followed)
     getCount()
