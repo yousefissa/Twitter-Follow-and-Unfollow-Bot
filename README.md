@@ -20,6 +20,10 @@ You will need tweepy, re and time installed.
 
 You must put your auth info into config.py
 
-## FOR WHITELISTING:
+## For Whitelisting:
 
 Whitelisting a user means that the bot will NOT unfollow them. To whitelist a user, input one screen_name WITHOUT the @ sign per line below. Here are some examples. Input the names to the whitelisted.txt file.
+
+## For Following Based on Keywords:
+
+To follow users based on something they have tweeted, input keywords or keyword phrases in the keywords.txt file. Only put one keyword per line.
