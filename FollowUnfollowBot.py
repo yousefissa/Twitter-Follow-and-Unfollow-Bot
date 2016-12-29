@@ -27,9 +27,10 @@ def mainMenu():
           '4. Follow users who retweeted a tweet. \n'
           '5. Unfollow users that don\'t follow you back. \n'
           '6. Unfollow all users. \n'
-          '7. Send a DM to users that follow you. \n'
-          '8. Get follower and following count. \n'
-          '9. Quit. '
+          '7. Favorite tweets based on a keyword. \n'
+          '8. Send a DM to users that follow you. \n'
+          '9. Get follower and following count. \n'
+          '10. Quit. '
           )
     userChoice = input('Enter the number of the action that you want to take: ')
 
@@ -41,9 +42,10 @@ def mainMenu():
         4: followRters,
         5: unfollowBack,
         6: unfollowAll,
-        7: sendDM,
-        8: getCount,
-        9: quit
+        7: favOffKeyword,
+        8: sendDM,
+        9: getCount,
+        10: quit
     }
 
     # tries running the function according to the number. restarts if given a non-number or number not in range.
@@ -65,33 +67,33 @@ def getFriends():
 
     # gets a list of whitelisted users from a text file
     with open('Whitelisted.txt') as whitelistedText:
-        whitelistedUsersOld = whitelistedText.read().splitlines()
+        whitelisted_users_old = whitelistedText.read().splitlines()
 
     # to not modify the iterated we're looping over, a new list is created.
-    whitelistedUsers = []
+    whitelisted_users = []
 
     # convert screen names to user IDs
-    for item in whitelistedUsersOld:
+    for item in whitelisted_users_old:
         # gets info, then gets id.
         item = api.get_user(screen_name=item).id
         # adds the id into newlist.
-        whitelistedUsers.append(item)
+        whitelisted_users.append(item)
 
-    return followers, following, total_followed, whitelistedUsers
+    return followers, following, total_followed, whitelisted_users
 
 
 # function to follow back users that follow you.
 def followBack():
     # gets followers, following, total_followed
-    followers, following, total_followed, whitelistedUsers = getFriends()
+    followers, following, total_followed, whitelisted_users = getFriends()
 
     # Makes a list of  those you don't follow back.
-    nonFollowing = set(followers) - set(following)
+    non_following = set(followers) - set(following)
 
     print('Starting to follow users...')
 
     # starts following users.
-    for f in nonFollowing:
+    for f in non_following:
         # follows the user if you don't already follow them back.
         api.create_friendship(f)
 
@@ -114,19 +116,19 @@ def followBack():
 # function to follow the followers of another user.
 def followAll():
     # gets followers, following, total_followed
-    followers, following, total_followed, whitelistedUsers = getFriends()
+    followers, following, total_followed, whitelisted_users = getFriends()
 
     # gets a list of their followers
-    theirName = input('Input their name. Do not use an @ sign. For example, for @POTUS, input just POTUS: ')
-    theirFollowers = api.followers_ids(theirName)
+    their_name = input('Input their name. Do not use an @ sign. For example, for @POTUS, input just POTUS: ')
+    their_followers = api.followers_ids(their_name)
 
     # Makes a list of nonmutual followings.
-    theirFollowersReduced = set(theirFollowers) - set(following)
-    # loops through theirFollowers and followers and adds non-mutual relationships to theirFollowersReduced
+    their_followers_reduced = set(their_followers) - set(following)
+    # loops through their_followers and followers and adds non-mutual relationships to their_followers_reduced
 
     print('Starting to follow users...')
     # loops through the list and follows users.
-    for f in theirFollowersReduced:
+    for f in their_followers_reduced:
         try:
             # follows the user.
             api.create_friendship(f)
@@ -149,15 +151,15 @@ def followAll():
 
 # function to follow users based on a keyword:
 def followKeyword():
-    followers, following, total_followed, whitelistedUsers = getFriends()
+    followers, following, total_followed, whitelisted_users = getFriends()
 
-    with open('keywords.txt') as keywordsText:
-        keywords = keywordsText.read().splitlines()
+    with open('keywords.txt') as keywords_text:
+        keywords = keywords_text.read().splitlines()
 
     for i in keywords:
         # gets search result
-        searchResults = api.search(q=i,count=100)
-        searchedScreenNames = [tweet.author._json['screen_name'] for tweet in searchResults]
+        search_results = api.search(q=i,count=100)
+        searchedScreenNames = [tweet.author._json['screen_name'] for tweet in search_results]
         # only follows 100 of each keyword to avoid following non-relevant users.
         print('Starting to follow users who tweeted \'{}\''.format(i))
         for i in range(0, len(searchedScreenNames) - 1):
@@ -181,28 +183,17 @@ def followKeyword():
     Continue()
 
 
-
-
-
-
-
-
-    # prints the total followed, then continues
-    print(total_followed)
-    getCount()
-    Continue()
-
 # function to follow users who retweeted a tweet.
 def followRters():
     # gets followers, following, total_followed
-    followers, following, total_followed, whitelistedUsers = getFriends()
+    followers, following, total_followed, whitelisted_users = getFriends()
 
     print('Per Twitter\'s API, this method only returns a max of 100 users per tweet. \n')
 
     # gets the tweet ID using regex
-    tweetURL = input('Please input the full URL of the tweet: ')
+    tweet_url = input('Please input the full URL of the tweet: ')
     try:
-        tweetID = search('/status/(\d+)', tweetURL).group(1)
+        tweetID = search('/status/(\d+)', tweet_url).group(1)
     except tweepy.TweepError as e:
         print('Could not get tweet ID. Try again. ')
         followRters()
@@ -238,13 +229,13 @@ def followRters():
 # function to unfollow users that don't follow you back.
 def unfollowBack():
     # gets followers, following, total_followed
-    followers, following, total_followed, whitelistedUsers = getFriends()
+    followers, following, total_followed, whitelisted_users = getFriends()
 
     print('Starting to unfollow users...')
 
     # makes a new list of users who don't follow you back.
-    nonMutuals = set(following) - set(followers) - set(whitelistedUsers)
-    for f in nonMutuals:
+    non_mutuals = set(following) - set(followers) - set(whitelisted_users)
+    for f in non_mutuals:
         try:
             # unfollows non follower.
             api.destroy_friendship(f)
@@ -270,13 +261,13 @@ def unfollowBack():
 # function to unfollow all users.
 def unfollowAll():
     # gets followers, following, total_followed
-    followers, following, total_followed, whitelistedUsers = getFriends()
+    followers, following, total_followed, whitelisted_users = getFriends()
 
     # whitelists some users.
-    unfollowingUsers = set(following) - set(whitelistedUsers)
+    unfollowing_users = set(following) - set(whitelisted_users)
 
     print('Starting to unfollow.')
-    for f in unfollowingUsers:
+    for f in unfollowing_users:
         # unfollows user
         api.destroy_friendship(f)
         # increment total_followed by 1
@@ -293,12 +284,43 @@ def unfollowAll():
     getCount()
     Continue()
 
+# Function to favorite tweets based on keywords
+def favOffKeyword():
+    followers, following, total_followed, whitelisted_users = getFriends()
+
+    with open('keywords.txt') as keywords_text:
+        keywords = keywords_text.read().splitlines()
+
+
+    for i in keywords:
+        # gets search result
+        search_results = api.search(q=i,count=100)
+        searched_tweet_ids = [tweet.id for tweet in search_results]
+
+        # only follows 100 of each keyword to avoid following non-relevant users.
+        print('Starting to follow users who tweeted \'{}\''.format(i))
+        for i in range(0, len(searched_tweet_ids) - 1):
+            try:
+                api.create_favorite(searched_tweet_ids[i])
+                total_followed += 1
+                if total_followed % 10 == 0:
+                    print(str(total_followed) + ' tweets favorited so far.')
+                print('Favorited tweet. Sleeping 8 seconds.')
+                time.sleep(8)
+            except tweepy.TweepError as e:
+                print('Could not favorite tweet.')
+                pass
+    # prints the total followed, then continues
+    print(total_followed)
+    getCount()
+    Continue()
+
 
 # TODO: allow the importing of text lists so messages don't get flagged as spam.
 # Send a DM to users that follow you.
 def sendDM():
     # gets followers, following, total_followed
-    followers, following, total_followed, whitelistedUsers = getFriends()
+    followers, following, total_followed, whitelisted_users = getFriends()
 
     print('A message will be sent')
 
@@ -332,7 +354,7 @@ def sendDM():
 # function to get follower/following count
 def getCount():
     # gets followers, following, total_followed
-    followers, following, total_followed, whitelistedUsers = getFriends()
+    followers, following, total_followed, whitelisted_users = getFriends()
     # prints the count.
     print('You follow {} users and {} users follow you.'.format(len(followers), len(followers)))
     print('This is sometimes inaccurate due to the nature of the API and updates. Be sure to double check. ')
@@ -342,12 +364,12 @@ def getCount():
 # function to continue
 def Continue():
     # asks the user if they want to keep calculating, converts to lower case
-    keepGoing = input('Do you want to keep going? Enter yes or no. \n'
+    keep_going = input('Do you want to keep going? Enter yes or no. \n'
                       '').lower()
     # evaluates user's response.
-    if keepGoing == 'yes':
+    if keep_going == 'yes':
         mainMenu()
-    elif keepGoing == 'no':
+    elif keep_going == 'no':
         print('\n'
               'Thanks for using the Twitter bot!')
         quit()
