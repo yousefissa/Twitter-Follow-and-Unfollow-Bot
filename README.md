@@ -3,15 +3,16 @@ Python3
 # This is a twitter bot that allows you to do a few things:
 
 
-1. Follow back users that follow you.
+1. Follow back users that follow you. 
 2. Follow the followers of another user. 
 3. Follow users based on a keyword. 
 4. Follow users who retweeted a tweet.
 5. Unfollow users that don't follow you back. 
 6. Unfollow all users. 
-7. Send users automated DMs.
-8. Get follower and following count. 
-9. Quit
+7. Favorite tweets based on a keyword. 
+8. Send a DM to users that follow you. 
+9. Get follower and following count.
+10. Quit. 
 
 
 You will need tweepy, re and time installed.
