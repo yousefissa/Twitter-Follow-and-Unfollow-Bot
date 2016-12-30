@@ -110,7 +110,6 @@ def followBack(followers, following, total_followed, whitelisted_users):
 
     # prints the total followed, then continues
     print(total_followed)
-    getCount()
     Continue()
 
 
@@ -143,7 +142,6 @@ def followAll(followers, following, total_followed, whitelisted_users):
 
     # prints the total followed, then continues
     print(total_followed)
-    getCount()
     Continue()
 
 
@@ -175,7 +173,6 @@ def followKeyword(followers, following, total_followed, whitelisted_users):
                 pass
     # prints the total followed, then continues
     print(total_followed)
-    getCount()
     Continue()
 
 
@@ -215,7 +212,6 @@ def followRters(followers, following, total_followed, whitelisted_users):
 
     # prints the total followed, then continues
     print(total_followed)
-    getCount()
     Continue()
 
 
@@ -245,7 +241,6 @@ def unfollowBack(followers, following, total_followed, whitelisted_users):
 
     # prints the total followed, then continues
     print(total_followed)
-    getCount()
     Continue()
 
 
@@ -269,7 +264,6 @@ def unfollowAll(followers, following, total_followed, whitelisted_users):
         time.sleep(8)
     # prints the total followed, then continues
     print(total_followed)
-    getCount()
     Continue()
 
 
@@ -298,7 +292,6 @@ def favOffKeyword(followers, following, total_followed, whitelisted_users):
                 pass
     # prints the total followed, then continues
     print(total_followed)
-    getCount()
     Continue()
 
 
@@ -330,7 +323,6 @@ def sendDM(followers, following, total_followed, whitelisted_users):
         except tweepy.TweepError as e:
             print('Could not send a DM. Trying another user.')
     print(total_followed)
-    getCount()
     Continue()
 
 
