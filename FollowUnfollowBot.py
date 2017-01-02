@@ -82,7 +82,6 @@ def getFriends():
         item = api.get_user(screen_name=item).id
         # adds the id into newlist.
         whitelisted_users.append(item)
-
     return followers, following, total_followed, whitelisted_users
 
 
@@ -137,8 +136,13 @@ def followAll(followers, following, total_followed, whitelisted_users):
             # sleeps so it doesn't follow too quickly.
             print('Followed user. Sleeping 10 seconds.')
             time.sleep(10)
+        except tweepy.RateLimitError:
+            print('You\'ve hit a limit! Sleeping for 30 minutes.')
+            time.sleep(60 * 30)
         except tweepy.TweepError as e:
-            pass
+            print('Uh oh. Could not complete task. Sleeping 10 seconds.')
+            time.sleep(10)
+
 
     # prints the total followed, then continues
     print(total_followed)
@@ -168,9 +172,12 @@ def followKeyword(followers, following, total_followed, whitelisted_users):
                 # sleeps so it doesn't follow too quickly.
                 print('Followed user. Sleeping 10 seconds.')
                 time.sleep(10)
+            except tweepy.RateLimitError:
+                print('You\'ve hit a limit! Sleeping for 30 minutes.')
+                time.sleep(60 * 30)
             except tweepy.TweepError as e:
-                print('Could not follow user.')
-                pass
+                print('Uh oh. Could not complete task. Sleeping 10 seconds.')
+                time.sleep(10)
     # prints the total followed, then continues
     print(total_followed)
     Continue()
@@ -185,6 +192,7 @@ def followRters(followers, following, total_followed, whitelisted_users):
     try:
         tweetID = search('/status/(\d+)', tweet_url).group(1)
     except tweepy.TweepError as e:
+        print(e)
         print('Could not get tweet ID. Try again. ')
         followRters()
 
@@ -206,10 +214,12 @@ def followRters(followers, following, total_followed, whitelisted_users):
             # sleeps so it doesn't follow too quickly.
             print('Followed user. Sleeping 10 seconds.')
             time.sleep(10)
-        # most basic error handling.
+        except tweepy.RateLimitError:
+            print('You\'ve hit a limit! Sleeping for 30 minutes.')
+            time.sleep(60 * 30)
         except tweepy.TweepError as e:
-            print('Could not follow user.')
-
+            print('Uh oh. Could not complete task. Sleeping 10 seconds.')
+            time.sleep(10)
     # prints the total followed, then continues
     print(total_followed)
     Continue()
@@ -235,9 +245,12 @@ def unfollowBack(followers, following, total_followed, whitelisted_users):
             # print sleeping, sleep.
             print('Unfollowed user. Sleeping 15 seconds.')
             time.sleep(15)
+        except tweepy.RateLimitError:
+            print('You\'ve hit a limit! Sleeping for 30 minutes.')
+            time.sleep(60 * 30)
         except tweepy.TweepError as e:
-            print('Could not unfollow users. Sleeping, then trying next user.')
-            time.sleep(5)
+            print('Uh oh. Could not complete task. Sleeping 10 seconds.')
+            time.sleep(10)
 
     # prints the total followed, then continues
     print(total_followed)
@@ -285,11 +298,14 @@ def favOffKeyword(followers, following, total_followed, whitelisted_users):
                 total_followed += 1
                 if total_followed % 10 == 0:
                     print(str(total_followed) + ' tweets favorited so far.')
-                print('Favorited tweet. Sleeping 8 seconds.')
-                time.sleep(8)
+                print('Favorited tweet. Sleeping 12 seconds.')
+                time.sleep(12)
+            except tweepy.RateLimitError:
+                print('You\'ve hit a limit! Sleeping for 30 minutes.')
+                time.sleep(60 * 30)
             except tweepy.TweepError as e:
-                print('Could not favorite tweet.')
-                pass
+                print('Uh oh. Could not complete task. Sleeping 10 seconds.')
+                time.sleep(10)
     # prints the total followed, then continues
     print(total_followed)
     Continue()
@@ -320,8 +336,12 @@ def sendDM(followers, following, total_followed, whitelisted_users):
             print('Sent the user a DM. Sleeping 15 seconds.')
             time.sleep(15)
 
+        except tweepy.RateLimitError:
+            print('You\'ve hit a limit! Sleeping for 30 minutes.')
+            time.sleep(60 * 30)
         except tweepy.TweepError as e:
-            print('Could not send a DM. Trying another user.')
+            print('Uh oh. Could not complete task. Sleeping 10 seconds.')
+            time.sleep(10)
     print(total_followed)
     Continue()
 
