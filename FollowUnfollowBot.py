@@ -86,13 +86,18 @@ def getFriends():
             whitelisted_users.append(item)
         except tweepy.TweepError:
             pass
-    return followers, following, total_followed, whitelisted_users
+
+    # blacklist users to not folllow
+    with open('blacklisted.txt') as blacklisted_text:
+        blacklisted_users = blacklisted_text.read().splitlines()
+
+    return followers, following, total_followed, whitelisted_users, blacklisted_users
 
 
 # function to follow back users that follow you.
-def followBack(followers, following, total_followed, whitelisted_users):
+def followBack(followers, following, total_followed, whitelisted_users, blacklisted_users):
     # Makes a list of  those you don't follow back.
-    non_following = set(followers) - set(following)
+    non_following = set(followers) - set(following) - set(blacklisted_users)
 
     print('Starting to follow users...')
 
@@ -120,13 +125,13 @@ def followBack(followers, following, total_followed, whitelisted_users):
 
 
 # function to follow the followers of another user.
-def followAll(followers, following, total_followed, whitelisted_users):
+def followAll(followers, following, total_followed, whitelisted_users, blacklisted_users):
     # gets a list of their followers
     their_name = input('Input their name. Do not use an @ sign. For example, for @POTUS, input just POTUS: ')
     their_followers = api.followers_ids(their_name)
 
     # Makes a list of nonmutual followings.
-    their_followers_reduced = set(their_followers) - set(following)
+    their_followers_reduced = set(their_followers) - set(following) - set(blacklisted_users)
     # loops through their_followers and followers and adds non-mutual relationships to their_followers_reduced
 
     print('Starting to follow users...')
@@ -152,7 +157,7 @@ def followAll(followers, following, total_followed, whitelisted_users):
 
 
 # function to follow users based on a keyword:
-def followKeyword(followers, following, total_followed, whitelisted_users):
+def followKeyword(followers, following, total_followed, whitelisted_users, blacklisted_users):
     with open('keywords.txt') as keywords_text:
         keywords = keywords_text.read().splitlines()
 
@@ -160,6 +165,7 @@ def followKeyword(followers, following, total_followed, whitelisted_users):
         # gets search result
         search_results = api.search(q=i, count=100)
         searchedScreenNames = [tweet.author._json['screen_name'] for tweet in search_results]
+        searchedScreenNames = set(searchedScreenNames) - set(blacklisted_users)
         # only follows 100 of each keyword to avoid following non-relevant users.
         print('Starting to follow users who tweeted \'{}\''.format(i))
         for i in range(0, len(searchedScreenNames) - 1):
@@ -182,7 +188,7 @@ def followKeyword(followers, following, total_followed, whitelisted_users):
 
 
 # function to follow users who retweeted a tweet.
-def followRters(followers, following, total_followed, whitelisted_users):
+def followRters(followers, following, total_followed, whitelisted_users, blacklisted_users):
     print('Per Twitter\'s API, this method only returns a max of 100 users per tweet. \n')
 
     # gets the tweet ID using regex
@@ -196,6 +202,7 @@ def followRters(followers, following, total_followed, whitelisted_users):
 
     # gets a list of users who retweeted a tweet
     RTUsers = api.retweeters(tweetID)
+    RTUsers = set(RTUsers) - set(blacklisted_users)
 
     print('Starting to follow users.')
 
@@ -220,8 +227,10 @@ def followRters(followers, following, total_followed, whitelisted_users):
 
 
 # function to unfollow users that don't follow you back.
-def unfollowBack(followers, following, total_followed, whitelisted_users):
+def unfollowBack(followers, following, total_followed, whitelisted_users, blacklisted_users):
     print('Starting to unfollow users...')
+
+    new_blacklisted_users = []
 
     # makes a new list of users who don't follow you back.
     non_mutuals = set(following) - set(followers) - set(whitelisted_users)
@@ -229,13 +238,16 @@ def unfollowBack(followers, following, total_followed, whitelisted_users):
         try:
             # unfollows non follower.
             api.destroy_friendship(f)
-
+            new_blacklisted_users.append(f)
             # increment total_followed by 1
             total_followed += 1
             # print total unfollowed every 10
             if total_followed % 10 == 0:
                 print(str(total_followed) + ' unfollowed so far.')
-
+                # writes blacklisted users to file
+                with open('blacklisted.txt', mode='a') as blacklisted_text: 
+                    blacklisted_text.write('\n'.join(map(str,new_blacklisted_users)))
+                    new_blacklisted_users = []
             # print sleeping, sleep.
             print('Unfollowed user. Sleeping 15 seconds.')
             sleep(15)
@@ -247,20 +259,25 @@ def unfollowBack(followers, following, total_followed, whitelisted_users):
 
 
 # function to unfollow all users.
-def unfollowAll(followers, following, total_followed, whitelisted_users):
+def unfollowAll(followers, following, total_followed, whitelisted_users, blacklisted_users):
     # whitelists some users.
     unfollowing_users = set(following) - set(whitelisted_users)
+
+    new_blacklisted_users = []
 
     print('Starting to unfollow.')
     for f in unfollowing_users:
         # unfollows user
         api.destroy_friendship(f)
+        new_blacklisted_users.append(f)
         # increment total_followed by 1
         total_followed += 1
         # print total unfollowed every 10
         if total_followed % 10 == 0:
             print(str(total_followed) + ' unfollowed so far.')
-
+            with open('blacklisted.txt', mode='a') as blacklisted_text: 
+                blacklisted_text.write('\n'.join(map(str,new_blacklisted_users)))
+                new_blacklisted_users = []
         # print sleeping, sleep.
         print('Unfollowed user. Sleeping 8 seconds.')
         sleep(8)
@@ -270,7 +287,7 @@ def unfollowAll(followers, following, total_followed, whitelisted_users):
 
 
 # Function to favorite tweets based on keywords
-def favOffKeyword(followers, following, total_followed, whitelisted_users):
+def favOffKeyword(followers, following, total_followed, whitelisted_users, blacklisted_users):
     with open('keywords.txt') as keywords_text:
         keywords = keywords_text.read().splitlines()
 
@@ -298,7 +315,7 @@ def favOffKeyword(followers, following, total_followed, whitelisted_users):
 
 # TODO: allow the importing of text lists so messages don't get flagged as spam.
 # Send a DM to users that follow you.
-def sendDM(followers, following, total_followed, whitelisted_users):
+def sendDM(followers, following, total_followed, whitelisted_users, blacklisted_users):
     print('A message will be sent')
     message = input('Enter the message you want to send: \n')
 
@@ -323,7 +340,7 @@ def sendDM(followers, following, total_followed, whitelisted_users):
 
 
 # function to get follower/following count
-def getCount(followers, following, total_followed, whitelisted_users):
+def getCount(followers, following, total_followed, whitelisted_users, blacklisted_users):
     # prints the count.
     print('You follow {} users and {} users follow you.'.format(len(followers), len(followers)))
     print('This is sometimes inaccurate due to the nature of the API and updates. Be sure to double check. ')
