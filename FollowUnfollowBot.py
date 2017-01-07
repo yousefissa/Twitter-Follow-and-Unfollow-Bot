@@ -79,10 +79,13 @@ def getFriends():
 
     # convert screen names to user IDs
     for item in whitelisted_users_old:
-        # gets info, then gets id.
-        item = api.get_user(screen_name=item).id
-        # adds the id into newlist.
-        whitelisted_users.append(item)
+        try:
+            # gets info, then gets id.
+            item = api.get_user(screen_name=item).id
+            # adds the id into newlist.
+            whitelisted_users.append(item)
+        except tweepy.TweepError:
+            pass
     return followers, following, total_followed, whitelisted_users
 
 
@@ -298,7 +301,7 @@ def favOffKeyword(followers, following, total_followed, whitelisted_users):
 def sendDM(followers, following, total_followed, whitelisted_users):
     print('A message will be sent')
     message = input('Enter the message you want to send: \n')
-    
+
     # tries sending a message to your followers. 
     print('Starting to send messages... ')
     for f in followers:
