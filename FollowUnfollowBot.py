@@ -11,6 +11,8 @@ import tweepy
 from time import sleep
 from re import search
 from config import *
+from itertools import cycle
+from random import shuffle
 
 # authorization from values inputted earlier, do not change.
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -316,23 +318,25 @@ def favOffKeyword(followers, following, total_followed, whitelisted_users, black
 # TODO: allow the importing of text lists so messages don't get flagged as spam.
 # Send a DM to users that follow you.
 def sendDM(followers, following, total_followed, whitelisted_users, blacklisted_users):
-    print('A message will be sent')
-    message = input('Enter the message you want to send: \n')
-
-    # tries sending a message to your followers. 
+    with open('messages.txt') as messages_text:
+        messages = messages_text.read().splitlines()
+    greetings = ['Hey', 'Hi', 'Hello']
+    shuffle(followers)
+    # tries sending a message to your followers. switches greeting and message. 
     print('Starting to send messages... ')
-    for f in followers:
+    for user, message, greeting in zip(followers, cycle(messages), cycle(greetings)):
         try:
+            username = api.get_user(user).screen_name
             # sends dm. 
-            api.send_direct_message(user_id=f, text=message)
+            api.send_direct_message(user_id=user, text='{} {},\n{}'.format(greeting, username, message))
 
             # increment total_followed by 1
             total_followed += 1
             # print total unfollowed every 10
             if total_followed % 10 == 0:
                 print(str(total_followed) + ' messages sent so far.')
-            print('Sent the user a DM. Sleeping 15 seconds.')
-            sleep(15)
+            print('Sent the user a DM. Sleeping 45 seconds.')
+            sleep(45)
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
     print(total_followed)
