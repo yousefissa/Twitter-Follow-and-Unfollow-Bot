@@ -28,3 +28,7 @@ Whitelisting a user means that the bot will NOT unfollow them. To whitelist a us
 ## For Following Based on Keywords:
 
 To follow users based on something they have tweeted, input keywords or keyword phrases in the keywords.txt file. Only put one keyword per line.
+
+## For Sending DMs.
+
+To send DMs, put the messages into the messages.txt file. The bot will send DMs to random users.
