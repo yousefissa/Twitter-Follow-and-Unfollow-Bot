@@ -62,6 +62,8 @@ This is a bot that allows you to do a few things:
         print('Input not recognized. You probably did not enter a number. \n'
               'The program will restart. \n')
         main_menu()
+    finally:
+        Continue()
 
 
 # function to get list of followers and followings, gets whitelisted users
@@ -69,16 +71,12 @@ def get_friends():
     # gets a list of your followers and following
     followers = api.followers_ids(screen_name)
     following = api.friends_ids(screen_name)
-    # resets total_followed everytime this is called. This is so that the user can keep track when they continue.
     total_followed = 0
 
     # gets a list of whitelisted users from a text file
     with open('Whitelisted.txt') as whitelistedText:
         whitelisted_users_old = whitelistedText.read().splitlines()
-
-    # to not modify the iterated we're looping over, a new list is created.
     whitelisted_users = []
-
     # convert screen names to user IDs
     for item in whitelisted_users_old:
         try:
@@ -88,7 +86,6 @@ def get_friends():
             whitelisted_users.append(item)
         except tweepy.TweepError:
             pass
-
     # blacklist users to not folllow
     with open('blacklisted.txt') as blacklisted_text:
         blacklisted_users = blacklisted_text.read().splitlines()
@@ -106,29 +103,19 @@ def follow_back(followers, following, total_followed, whitelisted_users, blackli
     # starts following users.
     for f in non_following:
         try:
-            # follows the user if you don't already follow them back.
             api.create_friendship(f)
-
-            # keep track of the total followed
             total_followed += 1
-            # print total total every 10 follows
             if total_followed % 10 == 0:
                 print(str(total_followed) + ' users followed so far.')
-
-            # sleeps so it doesn't follow too quickly.
             print('Followed user. Sleeping 10 seconds.')
             sleep(10)
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
-
-    # prints the total followed, then continues
     print(total_followed)
-    Continue()
-
+    
 
 # function to follow the followers of another user.
 def follow_all(followers, following, total_followed, whitelisted_users, blacklisted_users):
-    # gets a list of their followers
     their_name = input('Input their name. Do not use an @ sign. For example, for @POTUS, input just POTUS: ')
     their_followers = api.followers_ids(their_name)
 
@@ -142,21 +129,15 @@ def follow_all(followers, following, total_followed, whitelisted_users, blacklis
         try:
             # follows the user.
             api.create_friendship(f)
-            # keep track of the total followed
             total_followed += 1
-            # print total total every 10 follows
             if total_followed % 10 == 0:
                 print(str(total_followed) + ' users followed so far.')
-            # sleeps so it doesn't follow too quickly.
             print('Followed user. Sleeping 10 seconds.')
             sleep(10)
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
-
-    # prints the total followed, then continues
     print(total_followed)
-    Continue()
-
+    
 
 # function to follow users based on a keyword:
 def follow_keyword(followers, following, total_followed, whitelisted_users, blacklisted_users):
@@ -174,19 +155,15 @@ def follow_keyword(followers, following, total_followed, whitelisted_users, blac
             try:
                 # follows the user.
                 api.create_friendship(searched_screen_names[i])
-                # keep track of the total followed
                 total_followed += 1
-                # print total total every 10 follows
                 if total_followed % 10 == 0:
                     print(str(total_followed) + ' users followed so far.')
-                # sleeps so it doesn't follow too quickly.
                 print('Followed user. Sleeping 10 seconds.')
                 sleep(10)
             except (tweepy.RateLimitError, tweepy.TweepError) as e:
                 error_handling(e)
-    # prints the total followed, then continues
     print(total_followed)
-    Continue()
+    
 
 
 # function to follow users who retweeted a tweet.
@@ -211,11 +188,8 @@ def follow_rters(followers, following, total_followed, whitelisted_users, blackl
     # follows users:
     for f in RTUsers:
         try:
-            # follows the user.
             api.create_friendship(f)
-            # keep track of the total followed
             total_followed += 1
-            # print total total every 10 follows
             if total_followed % 10 == 0:
                 print(str(total_followed) + ' users followed so far.')
             # sleeps so it doesn't follow too quickly.
@@ -223,9 +197,8 @@ def follow_rters(followers, following, total_followed, whitelisted_users, blackl
             sleep(10)
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
-    # prints the total followed, then continues
     print(total_followed)
-    Continue()
+    
 
 
 # function to unfollow users that don't follow you back.
@@ -241,9 +214,7 @@ def unfollow_back(followers, following, total_followed, whitelisted_users, black
             # unfollows non follower.
             api.destroy_friendship(f)
             new_blacklisted_users.append(f)
-            # increment total_followed by 1
             total_followed += 1
-            # print total unfollowed every 10
             if total_followed % 10 == 0:
                 print(str(total_followed) + ' unfollowed so far.')
                 # writes blacklisted users to file
@@ -255,9 +226,8 @@ def unfollow_back(followers, following, total_followed, whitelisted_users, black
             sleep(15)
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
-    # prints the total followed, then continues
     print(total_followed)
-    Continue()
+    
 
 
 # function to unfollow all users.
@@ -283,9 +253,8 @@ def unfollow_all(followers, following, total_followed, whitelisted_users, blackl
         # print sleeping, sleep.
         print('Unfollowed user. Sleeping 8 seconds.')
         sleep(8)
-    # prints the total followed, then continues
     print(total_followed)
-    Continue()
+    
 
 
 # Function to favorite tweets based on keywords
@@ -310,9 +279,8 @@ def fav_off_keyword(followers, following, total_followed, whitelisted_users, bla
                 sleep(12)
             except (tweepy.RateLimitError, tweepy.TweepError) as e:
                 error_handling(e)
-    # prints the total followed, then continues
     print(total_followed)
-    Continue()
+    
 
 
 # TODO: allow the importing of text lists so messages don't get flagged as spam.
@@ -335,9 +303,7 @@ def send_dm(followers, following, total_followed, whitelisted_users, blacklisted
             # sends dm. 
             api.send_direct_message(user_id=user, text='{} {},\n{}'.format(greeting, username, message))
             new_users_messaged.append(user)
-            # increment total_followed by 1
             total_followed += 1
-            # print total unfollowed every 10
             if total_followed % 5 == 0:
                 print(str(total_followed) + ' messages sent so far.')
                 with open('users_messaged.txt', mode='a') as users_messaged_text:
@@ -348,15 +314,14 @@ def send_dm(followers, following, total_followed, whitelisted_users, blacklisted
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
     print(total_followed)
-    Continue()
-
+    
 
 # function to get follower/following count
 def get_count(followers, following, total_followed, whitelisted_users, blacklisted_users):
     # prints the count.
     print('You follow {} users and {} users follow you.'.format(len(followers), len(followers)))
     print('This is sometimes inaccurate due to the nature of the API and updates. Be sure to double check. ')
-    Continue()
+    
 
 
 # function to handle errors
@@ -385,8 +350,7 @@ def Continue():
     else:
         print('\n'
               'Input not recognized. Try again.')
-        Continue()
-
+        
 
 # runs the main function, which runs everything else.
 main_menu()
