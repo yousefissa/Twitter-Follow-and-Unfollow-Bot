@@ -320,8 +320,13 @@ def fav_off_keyword(followers, following, total_followed, whitelisted_users, bla
 def send_dm(followers, following, total_followed, whitelisted_users, blacklisted_users):
     with open('messages.txt') as messages_text:
         messages = messages_text.read().splitlines()
-    greetings = ['Hey', 'Hi', 'Hello']
+    # users already dm'd
+    with open('users_messaged.txt') as users_messaged_text:
+        users_messaged = users_messaged_text.read().splitlines()
+    followers = list(set(followers) - set(users_messaged))
     shuffle(followers)
+    new_users_messaged = []
+    greetings = ['Hey', 'Hi', 'Hello']
     # tries sending a message to your followers. switches greeting and message. 
     print('Starting to send messages... ')
     for user, message, greeting in zip(followers, cycle(messages), cycle(greetings)):
@@ -329,12 +334,15 @@ def send_dm(followers, following, total_followed, whitelisted_users, blacklisted
             username = api.get_user(user).screen_name
             # sends dm. 
             api.send_direct_message(user_id=user, text='{} {},\n{}'.format(greeting, username, message))
-
+            new_users_messaged.append(user)
             # increment total_followed by 1
             total_followed += 1
             # print total unfollowed every 10
-            if total_followed % 10 == 0:
+            if total_followed % 5 == 0:
                 print(str(total_followed) + ' messages sent so far.')
+                with open('users_messaged.txt', mode='a') as users_messaged_text:
+                    users_messaged_text.write('\n'.join(map(str,new_users_messaged)))
+                    new_users_messaged = []
             print('Sent the user a DM. Sleeping 45 seconds.')
             sleep(45)
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
