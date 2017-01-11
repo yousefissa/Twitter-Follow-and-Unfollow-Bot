@@ -353,5 +353,5 @@ def Continue():
         
 
 # runs the main function, which runs everything else.
-if __init__ == "__main__":  
+if __name__ == "__main__":  
     main_menu()
