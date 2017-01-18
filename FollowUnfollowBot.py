@@ -143,12 +143,12 @@ def follow_all(followers, following, total_followed, whitelisted_users, blacklis
 def follow_keyword(followers, following, total_followed, whitelisted_users, blacklisted_users):
     with open('keywords.txt') as keywords_text:
         keywords = keywords_text.read().splitlines()
-
     for i in keywords:
         # gets search result
         search_results = api.search(q=i, count=100)
         searched_screen_names = [tweet.author._json['screen_name'] for tweet in search_results]
-        searched_screen_names = set(searched_screen_names) - set(blacklisted_users)
+        searched_screen_names = list(set(searched_screen_names) - set(blacklisted_users))
+
         # only follows 100 of each keyword to avoid following non-relevant users.
         print('Starting to follow users who tweeted \'{}\''.format(i))
         for i in range(0, len(searched_screen_names) - 1):
@@ -204,9 +204,7 @@ def follow_rters(followers, following, total_followed, whitelisted_users, blackl
 # function to unfollow users that don't follow you back.
 def unfollow_back(followers, following, total_followed, whitelisted_users, blacklisted_users):
     print('Starting to unfollow users...')
-
     new_blacklisted_users = []
-
     # makes a new list of users who don't follow you back.
     non_mutuals = set(following) - set(followers) - set(whitelisted_users)
     for f in non_mutuals:
@@ -234,9 +232,7 @@ def unfollow_back(followers, following, total_followed, whitelisted_users, black
 def unfollow_all(followers, following, total_followed, whitelisted_users, blacklisted_users):
     # whitelists some users.
     unfollowing_users = set(following) - set(whitelisted_users)
-
     new_blacklisted_users = []
-
     print('Starting to unfollow.')
     for f in unfollowing_users:
         # unfollows user
