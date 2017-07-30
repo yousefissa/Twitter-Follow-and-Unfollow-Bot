@@ -141,7 +141,7 @@ def follow_all(followers, following, total_followed, whitelisted_users, blacklis
 
 # function to follow users based on a keyword:
 def follow_keyword(followers, following, total_followed, whitelisted_users, blacklisted_users):
-    with open('keywords.txt') as keywords_text:
+    with open('keywords.txt', 'r', encoding="utf-8") as keywords_text:
         keywords = keywords_text.read().splitlines()
     for i in keywords:
         # gets search result
