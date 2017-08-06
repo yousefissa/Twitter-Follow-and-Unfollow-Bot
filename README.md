@@ -1,6 +1,6 @@
-Python3
+# Python Twitter Bot
 
-# This is a twitter bot that allows you to do a few things:
+This is a twitter bot that allows you to do automate a variety of twitter tasks!
 
 
 1. Follow back users that follow you. 
@@ -12,13 +12,34 @@ Python3
 7. Favorite tweets based on a keyword. 
 8. Send a DM to users that follow you. 
 9. Get follower and following count.
-10. Quit. 
 
+### Prerequisites
+You will need tweepy, re and time installed. Simply run the corresponding pip command like: 
 
-You will need tweepy, re and time installed.
+`pip install tweepy`
 
-## Setting up config.json file
+Additionally, you will need to set up your config.json file.
+
+### Setting up config.json file
 
 This file is the heart of the bot. You must place your twitter auth info in the auth object. I've labeled what you have to put and where to the best of my abilities. 
 
 Note: Make sure to clear all of the other fields if you do not want to follow based on keyword, whitelist, DM, etc! If you do, simply place your words in the corresponding list seperated by quotations and commas like what I have in the file right now.
+
+### Todo:
+
+* Add the ability to unfavorite all tweets.
+* Add a GUI.
+
+## Authors
+
+* **Yousef Issa** - [yousefissa](https://github.com/yousefissa)
+
+## License
+
+This project is licensed under the MIT License.
+
+## Acknowledgments/Other
+
+* Feel free to make edits or to comment on my code so that I can improve!
+* Thanks for reading!
