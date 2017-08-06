@@ -17,18 +17,8 @@ Python3
 
 You will need tweepy, re and time installed.
 
-## Config.py
+## Setting up config.json file
 
-You must put your auth info into config.py
+This file is the heart of the bot. You must place your twitter auth info in the auth object. I've labeled what you have to put and where to the best of my abilities. 
 
-## For Whitelisting:
-
-Whitelisting a user means that the bot will NOT unfollow them. To whitelist a user, input one screen_name WITHOUT the @ sign per line below. Here are some examples. Input the names to the whitelisted.txt file.
-
-## For Following Based on Keywords:
-
-To follow users based on something they have tweeted, input keywords or keyword phrases in the keywords.txt file. Only put one keyword per line.
-
-## For Sending DMs.
-
-To send DMs, put the messages into the messages.txt file. The bot will send DMs to random users.
+Note: Make sure to clear all of the other fields if you do not want to follow based on keyword, whitelist, DM, etc! If you do, simply place your words in the corresponding list seperated by quotations and commas like what I have in the file right now.
