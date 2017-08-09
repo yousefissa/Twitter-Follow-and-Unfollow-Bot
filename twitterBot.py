@@ -49,7 +49,7 @@ This is a bot that allows you to do a few things:
         5: unfollow_back,
         6: unfollow_all,
         7: fav_off_keyword,
-        8, unfavorite_all,
+        8: unfavorite_all,
         9: send_dm,
         10: get_count,
         11: quit
