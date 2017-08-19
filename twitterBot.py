@@ -68,8 +68,9 @@ This is a bot that allows you to do a few things:
 
 # function to get list of followers and followings, gets whitelisted users
 def get_friends():
+    screen_name = config_data["auth"]["screen_name"]
     # gets a list of your followers and following
-    followers = api.followers_ids(screen_name)
+    followers = api.followers_ids)
     following = api.friends_ids(screen_name)
     total_followed = 0
 
