@@ -11,6 +11,7 @@ from random import shuffle
 with open('config.json', 'r') as config_file:
     config_data = json.load(config_file)
 
+screen_name = config_data["auth"]["screen_name"]
 
 # authorization from values inputted earlier, do not change.
 auth = tweepy.OAuthHandler(config_data["auth"]["CONSUMER_KEY"], config_data["auth"]["CONSUMER_SECRET"])
@@ -23,22 +24,22 @@ def main_menu():
     print('''
 Please read the readme on Github before using this bot.
 
-This is a bot that allows you to do a few things: 
-    1. Follow back users that follow you. 
-    2. Follow the followers of another user. 
-    3. Follow users based on a keyword. 
+This is a bot that allows you to do a few things:
+    1. Follow back users that follow you.
+    2. Follow the followers of another user.
+    3. Follow users based on a keyword.
     4. Follow users who retweeted a tweet.
-    5. Unfollow users that don't follow you back. 
-    6. Unfollow all users. 
-    7. Favorite tweets based on a keyword. 
+    5. Unfollow users that don't follow you back.
+    6. Unfollow all users.
+    7. Favorite tweets based on a keyword.
     8. Unfavorite all tweets.
-    9. Send a DM to users that follow you. 
+    9. Send a DM to users that follow you.
     10. Get follower and following count.
-    11. Quit. 
+    11. Quit.
     '''
           )
 
-    userChoice = input('Enter the number of the action that you want to take: ')
+    userChoice = raw_input('Enter the number of the action that you want to take: ')
 
     # Dictionary of user choices
     choices = {
@@ -68,9 +69,8 @@ This is a bot that allows you to do a few things:
 
 # function to get list of followers and followings, gets whitelisted users
 def get_friends():
-    screen_name = config_data["auth"]["screen_name"]
     # gets a list of your followers and following
-    followers = api.followers_ids)
+    followers = api.followers_ids
     following = api.friends_ids(screen_name)
     total_followed = 0
 
@@ -111,11 +111,11 @@ def follow_back(followers, following, total_followed, whitelisted_users, blackli
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
     print(total_followed)
-    
+
 
 # function to follow the followers of another user.
 def follow_all(followers, following, total_followed, whitelisted_users, blacklisted_users):
-    their_name = input('Input their name. Do not use an @ sign. For example, for @POTUS, input just POTUS: ')
+    their_name = raw_input('Input their name. Do not use an @ sign. For example, for @POTUS, input just POTUS: ')
     their_followers = api.followers_ids(their_name)
 
     # Makes a list of nonmutual followings.
@@ -136,7 +136,7 @@ def follow_all(followers, following, total_followed, whitelisted_users, blacklis
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
     print(total_followed)
-    
+
 
 # function to follow users based on a keyword:
 def follow_keyword(followers, following, total_followed, whitelisted_users, blacklisted_users):
@@ -160,7 +160,7 @@ def follow_keyword(followers, following, total_followed, whitelisted_users, blac
             except (tweepy.RateLimitError, tweepy.TweepError) as e:
                 error_handling(e)
     print(total_followed)
-    
+
 
 
 # function to follow users who retweeted a tweet.
@@ -168,7 +168,7 @@ def follow_rters(followers, following, total_followed, whitelisted_users, blackl
     print('Per Twitter\'s API, this method only returns a max of 100 users per tweet. \n')
 
     # gets the tweet ID using regex
-    tweet_url = input('Please input the full URL of the tweet: ')
+    tweet_url = raw_input('Please input the full URL of the tweet: ')
     try:
         tweetID = search('/status/(\d+)', tweet_url).group(1)
     except tweepy.TweepError as e:
@@ -195,7 +195,7 @@ def follow_rters(followers, following, total_followed, whitelisted_users, blackl
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
     print(total_followed)
-    
+
 
 
 # function to unfollow users that don't follow you back.
@@ -215,7 +215,7 @@ def unfollow_back(followers, following, total_followed, whitelisted_users, black
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
     print(total_followed)
-    
+
 
 
 # function to unfollow all users.
@@ -267,18 +267,18 @@ def unfavorite_all(followers, following, total_followed, whitelisted_users, blac
             api.destroy_favorite(i.id)
             sleep(8)
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
-            error_handling(e)  
-          
+            error_handling(e)
+
 # Send a DM to users that follow you.
 def send_dm(followers, following, total_followed, whitelisted_users, blacklisted_users):
     shuffle(followers)
     greetings = ['Hey', 'Hi', 'Hello']
-    # tries sending a message to your followers. switches greeting and message. 
+    # tries sending a message to your followers. switches greeting and message.
     print('Starting to send messages... ')
     for user, message, greeting in zip(followers, cycle(messages), cycle(greetings)):
         try:
             username = api.get_user(user).screen_name
-            # sends dm. 
+            # sends dm.
             api.send_direct_message(user_id=user, text='{} {},\n{}'.format(greeting, username, message))
             total_followed += 1
             if total_followed % 5 == 0:
@@ -288,14 +288,14 @@ def send_dm(followers, following, total_followed, whitelisted_users, blacklisted
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
     print(total_followed)
-    
+
 
 # function to get follower/following count
 def get_count(followers, following, total_followed, whitelisted_users, blacklisted_users):
     # prints the count.
     print('You follow {} users and {} users follow you.'.format(len(followers), len(followers)))
     print('This is sometimes inaccurate due to the nature of the API and updates. Be sure to double check. ')
-    
+
 
 
 # function to handle errors
@@ -312,7 +312,7 @@ def error_handling(e):
 # function to continue
 def Continue():
     # asks the user if they want to keep calculating, converts to lower case
-    keep_going = input('Do you want to keep going? Enter yes or no. \n'
+    keep_going = raw_input('Do you want to keep going? Enter yes or no. \n'
                        '').lower()
     # evaluates user's response.
     if keep_going == 'yes':
@@ -324,8 +324,8 @@ def Continue():
     else:
         print('\n'
               'Input not recognized. Try again.')
-        
+
 
 # runs the main function, which runs everything else.
-if __name__ == "__main__":  
+if __name__ == "__main__":
     main_menu()
