@@ -142,7 +142,11 @@ def follow_all(followers, following, total_followed, whitelisted_users, blacklis
 def follow_keyword(followers, following, total_followed, whitelisted_users, blacklisted_users):
     for i in config_data["keywords"]:
         # gets search result
-        search_results = api.search(q=i, count=100)
+        search_results = api.search(
+            q=i,
+            count=config_data["results_search"],
+            lang=config_data["lang"],
+            geocode=config_data["geocode"])
         searched_screen_names = [tweet.author._json['screen_name'] for tweet in search_results]
         searched_screen_names = list(set(searched_screen_names) - set(blacklisted_users))
 
@@ -242,7 +246,11 @@ def fav_off_keyword(followers, following, total_followed, whitelisted_users, bla
 
     for i in config_data["keywords"]:
         # gets search result
-        search_results = api.search(q=i, count=100)
+        search_results = api.search(
+            q=i,
+            count=config_data["results_search"],
+            lang=config_data["lang"],
+            geocode=config_data["geocode"])
         searched_tweet_ids = [tweet.id for tweet in search_results]
 
         # only follows 100 of each keyword to avoid following non-relevant users.
@@ -293,7 +301,7 @@ def send_dm(followers, following, total_followed, whitelisted_users, blacklisted
 # function to get follower/following count
 def get_count(followers, following, total_followed, whitelisted_users, blacklisted_users):
     # prints the count.
-    print('You follow {} users and {} users follow you.'.format(len(followers), len(followers)))
+    print('You follow {} users and {} users follow you.'.format(len(following), len(followers)))
     print('This is sometimes inaccurate due to the nature of the API and updates. Be sure to double check. ')
 
 
