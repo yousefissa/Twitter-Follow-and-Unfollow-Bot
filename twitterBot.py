@@ -31,8 +31,8 @@ This is a bot that allows you to do a few things:
     4. Follow users who retweeted a tweet.
     5. Unfollow users that don't follow you back.
     6. Unfollow all users.
-    7. Favorite tweets based on a keyword.
-    8. Unfavorite all tweets.
+    7. Like tweets based on a keyword.
+    8. Unlike all tweets.
     9. Send a DM to users that follow you.
     10. Get follower and following count.
     11. Quit.
@@ -269,7 +269,7 @@ def fav_off_keyword(followers, following, total_followed, whitelisted_users, bla
 def unfavorite_all(followers, following, total_followed, whitelisted_users, blacklisted_users):
     total_unliked = 0
     all_favorites = api.favorites(screen_name)
-    
+
     for i in all_favorites:
         try:
             api.destroy_favorite(i.id)
