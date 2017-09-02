@@ -267,10 +267,16 @@ def fav_off_keyword(followers, following, total_followed, whitelisted_users, bla
 
 # unfavorite all favorites
 def unfavorite_all(followers, following, total_followed, whitelisted_users, blacklisted_users):
-    all_favorites = api.favorites(user)
+    total_unliked = 0
+    all_favorites = api.favorites(screen_name)
+    
     for i in all_favorites:
         try:
             api.destroy_favorite(i.id)
+            total_unliked += 1
+            if total_unliked % 10 == 0:
+                print(str(total_unliked) + ' tweets unliked so far.')
+            print('Unliked tweet. Sleeping 8 seconds.')
             sleep(8)
         except (tweepy.RateLimitError, tweepy.TweepError) as e:
             error_handling(e)
