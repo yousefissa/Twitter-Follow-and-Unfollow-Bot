@@ -9,9 +9,10 @@ This is a twitter bot that allows you to do automate a variety of twitter tasks!
 4. Follow users who retweeted a tweet.
 5. Unfollow users that don't follow you back. 
 6. Unfollow all users. 
-7. Favorite tweets based on a keyword. 
-8. Send a DM to users that follow you. 
-9. Get follower and following count.
+7. Like tweets based on a keyword. 
+8. Unlike all of your tweets.
+9. Send a DM to users that follow you. 
+10. Get follower and following count.
 
 ### Prerequisites
 You will need tweepy, re and time installed. Simply run the corresponding pip command like: 
