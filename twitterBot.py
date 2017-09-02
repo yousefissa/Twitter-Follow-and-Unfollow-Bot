@@ -252,14 +252,14 @@ def fav_off_keyword(followers, following, total_followed, whitelisted_users, bla
         searched_tweet_ids = [tweet.id for tweet in search_results]
 
         # only follows 100 of each keyword to avoid following non-relevant users.
-        print('Starting to favorite users who tweeted \'{}\''.format(i))
+        print('Starting to like users who tweeted \'{}\''.format(i))
         for i in range(0, len(searched_tweet_ids) - 1):
             try:
                 api.create_favorite(searched_tweet_ids[i])
                 total_followed += 1
                 if total_followed % 10 == 0:
-                    print(str(total_followed) + ' tweets favorited so far.')
-                print('Favorited tweet. Sleeping 12 seconds.')
+                    print(str(total_followed) + ' tweets liked so far.')
+                print('Liked tweet. Sleeping 12 seconds.')
                 sleep(12)
             except (tweepy.RateLimitError, tweepy.TweepError) as e:
                 error_handling(e)
