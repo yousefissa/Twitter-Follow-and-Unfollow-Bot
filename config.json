@@ -8,8 +8,6 @@
         "ACCESS_SECRET": "YOUR ACCESS SECRET"
     },
     "lang": "Searh your language here: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes (e.g. es)",
-    "geocode": "Use this tool: https://www.freemaptools.com/radius-around-point.htm
-    (e.g. 40.446947,-102.656250,800km)",
     "results_search": 5,
     "blacklisted": ["Put", "words", "or phrases that", "you want to", "blacklist", "in", "here"],
     "keywords":["Put keywords or phrases to follow or favorite based on a keyword. Seperate by commas like this:", "potato", "tomato"],
