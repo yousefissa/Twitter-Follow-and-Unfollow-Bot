@@ -70,7 +70,7 @@ This is a bot that allows you to do a few things:
 # function to get list of followers and followings, gets whitelisted users
 def get_friends():
     # gets a list of your followers and following
-    followers = api.followers_ids
+    followers = api.followers_ids(screen_name)
     following = api.friends_ids(screen_name)
     total_followed = 0
 
@@ -168,7 +168,7 @@ def follow_keyword(followers, following, total_followed, whitelisted_users, blac
 
 # function to follow users who retweeted a tweet.
 def follow_rters(followers, following, total_followed, whitelisted_users, blacklisted_users):
-    print('Per Twitter\'s API, this method only returns a max of 100 users per tweet. \n')
+    print("Per Twitter's API, this method only returns a max of 100 users per tweet. \n")
 
     # gets the tweet ID using regex
     tweet_url = input('Please input the full URL of the tweet: ')
