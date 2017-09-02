@@ -284,6 +284,7 @@ def unfavorite_all(followers, following, total_followed, whitelisted_users, blac
 # Send a DM to users that follow you.
 def send_dm(followers, following, total_followed, whitelisted_users, blacklisted_users):
     shuffle(followers)
+    messages = config_data["messages"]
     greetings = ['Hey', 'Hi', 'Hello']
     # tries sending a message to your followers. switches greeting and message.
     print('Starting to send messages... ')
