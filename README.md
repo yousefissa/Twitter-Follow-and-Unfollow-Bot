@@ -1,4 +1,4 @@
-## NOTE: This code has not been updated in ~3 years. This was a fun little project I made when learning to develop, and I have no plans to update it in the future. If you'd like to take ownership over this repository and clean it up, please shoot me an email. 
+## NOTE: This code has not been updated in ~3 years, and although it may still work, I can't say that is efficient. This was a fun little project I made when learning to develop, and I have no plans to update it in the future. If you'd like to take ownership over this repository and clean it up, please shoot me an email. 
 
 
 # Python Twitter Bot
